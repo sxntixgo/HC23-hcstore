@@ -1,0 +1,57 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block content %}
+<div class="container-lg pt-5">
+    <h2>Order</h2>
+    <h3>{{object.timestamp}}</h3>
+    <ul class="list-group list-group-flush">
+    {% for cartitem in object.cart.cartitem_set.all %}
+        <li id="li{{ cartitem.product.pk }}" class="list-group-item">
+            <div class="row">
+                <div class="col-3">
+                <div class="text-center">
+                    <img src="{% static cartitem.product.image %}" class="rounded" style="max-height: 200px; max-width: 200px;">
+                </div>
+                </div>
+                <div class="col-9">
+                <div class="d-flex w-100 justify-content-between">
+                    <h4 class="mb-1">{{ cartitem.product.name }}</h4>
+                    <h4 class="mb-1">${{ cartitem.product.price }}</h4>
+                </div>
+                <div class="d-flex w-100">
+                    <p class="mb-1">Description: {{ cartitem.product.description }}</p>
+                </div>
+                <div class="d-flex w-100">
+                    <p class="mb-1">Qty: {{ cartitem.quantity }}</p>
+                </div>
+                {% if cartitem.product.flag %}
+
+                <div class="d-flex w-100 pb-2">
+                    <button class="btn btn-success btn-sm" onclick="showFlag('flag{{forloop.counter}}');">Show Flag</button>
+                </div>
+
+                <div class="d-flex w-100">
+                    <div id="flag{{forloop.counter}}" class="alert alert-success" role="alert" style="display: none">
+                        {{ cartitem.product.flag }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+        <li class="list-group-item">
+            <h4 id="carttotal" class="text-end">Total ${{ object.cart.total }}</h4>
+        </li>
+    </ul>
+</div>
+<script>
+    function showFlag(id) {
+        element = document.getElementById(id);
+        if (element.style.display == 'none') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+      }
+</script>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block content %}
+<div class="container-lg pt-5">
+    <h2>Cart</h2>
+    <ul class="list-group list-group-flush">
+    {% for cartitem in object.cartitem_set.all %}
+        <li id="li{{ cartitem.product.pk }}" class="list-group-item">
+            <div class="row">
+                <div class="col-3">
+                <div class="text-center">
+                    <img src="{% static cartitem.product.image %}" class="rounded" style="max-height: 200px; max-width: 200px;">
+                    <!--{{ cartitem.product.flag}}-->
+                </div>
+                </div>
+                <div class="col-9">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ cartitem.product.name }}</h5>
+                    <h5 class="mb-1">${{ cartitem.product.price }}</h5>
+                </div>
+                <div class="d-flex w-100">
+                    <p class="mb-1">Description: {{ cartitem.product.description }}</p>
+                </div>
+                <div class="d-flex w-100 pt-2">
+                    <p class="mb-1">Qty: </p>
+                    <div class="dropdown ps-2">
+                        <button id="dropdownSelect{{ cartitem.product.pk }}" class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ cartitem.quantity }}
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 1);" href="#">1</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 2);" href="#">2</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 3);" href="#">3</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 4);" href="#">4</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 5);" href="#">5</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 6);" href="#">6</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 7);" href="#">7</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 8);" href="#">8</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 9);" href="#">9</a></li>
+                            <li><a class="dropdown-item" onclick="updateInCart({{cartitem.product.pk }}, 10);" href="#">10</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="d-flex w-100 pt-2">
+                    <button class="btn btn-danger btn-sm" onclick="deleteFromCart({{ cartitem.product.pk }});">Delete</button>
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+        <li class="list-group-item">
+            <h5 id="carttotal" class="text-end">Total ${{ object.total }}</h5>
+            <button id="btnpurchase" class="btn btn-primary float-end" onclick="purchase(1);">Purchase</button>
+        </li>
+    </ul>
+</div>
+<script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+    }
+    async function deleteFromCart(product) {
+        const response = await fetch("{% url 'delete_from_cart' %}", {
+            method: "POST",
+            body: JSON.stringify({
+            product: product
+        }),  
+        headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        "X-CSRFToken": getCookie('csrftoken')
+        }
+    });
+    let jsonData = await response.json();
+    document.getElementById("cartquantity").innerHTML = jsonData.cartQuantity;
+    document.getElementById("carttotal").innerHTML = "Total $" + jsonData.cartTotal;
+    document.getElementById("li"+product).outerHTML = "";
+    toast = document.getElementById("liveToast");
+    var t = new bootstrap.Toast(toast);
+    t.show();
+    }
+    async function updateInCart(product, quantity) {
+        const response = await fetch("{% url 'update_in_cart' %}", {
+            method: "POST",
+            body: JSON.stringify({
+            product: product,
+            quantity: quantity
+        }),  
+        headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        "X-CSRFToken": getCookie('csrftoken')
+        }
+    });
+    let jsonData = await response.json();
+    document.getElementById("cartquantity").innerHTML = jsonData.cartQuantity;
+    document.getElementById("carttotal").innerHTML = "Total $" + jsonData.cartTotal;
+    document.getElementById("dropdownSelect" + product).innerHTML = quantity;
+    toast = document.getElementById("liveToast");
+    var t = new bootstrap.Toast(toast);
+    t.show();
+    }
+    async function purchase(cart) {
+        document.getElementById("btnpurchase").innerHTML = "<span class=\"spinner-grow spinner-grow-sm\" role=\"status\" aria-hidden=\"true\"></span>Purchassing...</button>";
+        const response = await fetch("{% url 'place_order' %}", {
+            method: "POST",
+            body: JSON.stringify({
+        }),  
+        headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        "X-CSRFToken": getCookie('csrftoken')
+        }
+    });
+    if (response.redirected) {
+        document.location = response.url;
+    }
+    let jsonData = await response.json();
+    if (jsonData.error) {
+        document.getElementById("btnpurchase").innerHTML = "Purchase";
+        toast = document.getElementById("liveToastError");
+        toast.innerHTML = "<div class=\"toast-body\">"+jsonData.error+"</div>";
+        var t = new bootstrap.Toast(toast);
+        t.show();
+    };
+    }
+</script>
+{% endblock %}

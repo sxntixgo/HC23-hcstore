@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  nginx: 
+    image: nginx:1.23.4-alpine  
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on: 
+      - hcstore 
+    restart: "on-failure"
+    volumes:
+      - ./data/nginx:/etc/nginx/conf.d
+      - ./static:/static
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  hcstore:
+    env_file: 
+      - .env
+    build: ./hcstore 
+    expose: 
+      - ${WEB_PORT}
+    restart: "on-failure"
+    command: sh -c "python manage.py wait_for_database && python manage.py makemigrations --noinput && python manage.py migrate --noinput && python manage.py collectstatic --no-input && python manage.py loaddata products && python manage.py addsuperuser && gunicorn --bind :8000 --workers 3 hcstore.wsgi:application --reload"
+    depends_on: 
+      - db
+    volumes:  
+      - ./hcstore:/hcstore
+      - ./static:/static
+  db:
+    image: postgres:15.2-alpine 
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - database:/var/lib/postgresql/data/
+    env_file: 
+      - .env
+    environment: 
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+      - PGPORT=${DATABASE_PORT}
+    restart: "on-failure"
+volumes:
+  database:

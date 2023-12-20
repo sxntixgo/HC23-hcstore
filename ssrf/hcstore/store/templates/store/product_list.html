@@ -1,0 +1,77 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block content %}
+<div class="container-lg pt-5">
+    <h2>Products</h2>
+    <div class="row">
+    {% for product in object_list %}
+        <div class="col-sm-6">
+            <div class="card">
+                <img src="{% static product.image %}" class="card-img-top" onload="getProductName({{ product.pk}})">
+                <div class="card-body">
+                    <h5 class="card-title" id="productname{{ product.pk }}" >Product Name</h5>
+                    <p class="card-text">{{ product.description }}</p>
+                    <p class="card-text">${{ product.price }}</p>
+                    {% if user.is_authenticated %}
+                    <button class="btn btn-primary" id="btn{{product.pk}}" onclick="addToCart({{ product.pk}});">Add to cart</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+</div>
+<script>
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+    }
+
+    async function addToCart(product) {
+        document.getElementById("btn"+product).innerHTML = "<span class=\"spinner-grow spinner-grow-sm\" role=\"status\" aria-hidden=\"true\"></span>Adding to cart...</button>";
+        const response = await fetch("{% url 'add_to_cart' %}", {
+            method: "POST",
+            body: JSON.stringify({
+            product: product,
+            quantity: 1
+        }),  
+        headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        "X-CSRFToken": getCookie('csrftoken')
+        }
+    });
+    let jsonData = await response.json();
+    document.getElementById("cartquantity").innerHTML = jsonData.cartTotal;
+    document.getElementById("btn"+product).innerHTML = "Add more to cart";
+    toast = document.getElementById("liveToast");
+    var t = new bootstrap.Toast(toast);
+    t.show();
+    }
+
+    async function getProductName(product) {
+        const response = await fetch("{% url 'get_product_param' %}", {
+            method: "POST",
+            body: JSON.stringify({
+            url: "http://192.168.1.1:80/?productId=" + product +"&paramName=name"
+        }),  
+        headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        "X-CSRFToken": getCookie('csrftoken')
+        }
+    });
+    let jsonData = await response.json();
+    document.getElementById("productname"+product).innerHTML = jsonData.paramValue;
+    }
+</script>
+{% endblock %}

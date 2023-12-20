@@ -1,0 +1,1 @@
+Use the endpoints /cart/addto or /cart/updatein to add a negative number of flag products. Then, purchase the order.

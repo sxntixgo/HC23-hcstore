@@ -1,0 +1,71 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HC Store</title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'favico.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'scss/main.css' %}"/>
+    {% load bootstrap5 %}
+    {% bootstrap_javascript %}
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">HC Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ user.username }} (${{ user.customer.credit }})
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="{% url 'orders' %}">Orders</a></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                      </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cart' %}">
+                            Cart <span id="cartquantity" class="badge bg-light text-dark">{{ user.customer.cart.quantity }}</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% if not user.is_authenticated and request.resolver_match.view_name == 'home' %}
+    <div class="alert alert-primary d-flex align-items-center" role="alert">
+        <div>
+            To purchase an product, you need to log in. If you don't have an account, register to receive a ${{ default_credit|floatformat:2 }} welcome present.
+        </div>
+    </div>
+    {% endif %}
+    <div class="position-fixed top-5 end-0 p-3" style="z-index: 11">
+        <div class="toast text-white bg-success" id="liveToast">
+            <div class="toast-body">
+                Cart Updated!
+            </div>
+        </div>
+        <div class="toast text-white bg-danger" id="liveToastError">
+            <div class="toast-body">
+                Error
+            </div>
+        </div>
+    </div>
+{% block content %}
+{% endblock %}
+</body>
+</html>

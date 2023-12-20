@@ -1,0 +1,1 @@
+Send a POST request to /getprodparam with the body {"url":"http://192.168.1.1:8008/?productId=1&paramName=flag"}.

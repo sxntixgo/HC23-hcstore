@@ -1,0 +1,71 @@
+{% extends "./base.html" %}
+{% block content %}
+<div class="container-lg pt-5">
+    <h2>Orders</h2>
+    {% if object_list %}
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col text-center">
+                    <h4 class="mb-1">Order Number</h4>
+                </div>
+                <div class="col text-center">
+                    <h4 class="mb-1">List of Products</h4>
+                </div>
+                <div class="col text-center">
+                    <h4 class="mb-1">Total Products</h4>
+                </div>
+                <div class="col text-center">
+                    <h4 class="mb-1">Total</h4>
+                </div>
+            </div>
+        </li>
+    {% for transaction in object_list %}
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col text-center">
+                        <h5 class="mb-1"><a href="{% url 'order' transaction.pk %}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">{{ transaction.pk }}</a></h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                {% for cartitem in transaction.cart.cartitem_set.all %}
+                    <div class="row">
+                        <div class="col">
+                            {{ cartitem.quantity }} x {{ cartitem.product }}
+                        </div>
+                        {% if cartitem.product.flag %}
+                        <div id="flag{{forloop.parentloop.counter}}{{forloop.counter}}" class="alert alert-success" role="alert" style="display: none">
+                        {{ cartitem.product.flag }}
+                        </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                </div>
+                <div class="col text-end">
+                    <h5 class="mb-1">{{ transaction.cart.quantity }}</h5>
+                </div>
+                <div class="col text-end">
+                    <h5 class="mb-1">${{ transaction.cart.total }}</h5>
+                </div>
+            </div>
+        </li>    
+    {% endfor %}
+    {% else %}
+        <h5>You haven't purchased any product jet!</h5>
+    {% endif %}
+    </ul>
+</div>
+<script>
+    function showFlag(id) {
+        element = document.getElementById(id);
+        if (element.style.display == 'none') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+      }
+</script>
+{% endblock content%}

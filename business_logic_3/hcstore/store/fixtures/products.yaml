@@ -1,0 +1,16 @@
+- model: store.product
+  pk: 1
+  fields:
+    name: 'HC Flag'
+    description: 'The flag that you want'
+    price: 100
+    flag: 'flag={INeverPayFullPrice}'
+    image: 'hcflag.jpg'
+- model: store.product
+  pk: 2
+  fields:
+    name: 'Random Object'
+    description: 'This is a random object you can buy for testing purposes'
+    price: 1
+    flag: ''
+    image: 'randomobject.jpg'

@@ -1,0 +1,159 @@
+- model: store.cart
+  pk: 1
+  fields:
+    quantity: 1
+    total: '1.00'
+- model: store.cart
+  pk: 2
+  fields:
+    quantity: 1
+    total: '1.00'
+- model: store.cart
+  pk: 3
+  fields:
+    quantity: 1
+    total: '1.00'
+- model: store.cart
+  pk: 4
+  fields:
+    quantity: 1
+    total: '1.00'
+- model: store.cart
+  pk: 5
+  fields:
+    quantity: 1
+    total: '1.00'
+- model: store.cart
+  pk: 6
+  fields:
+    quantity: 1
+    total: '1.00'
+- model: store.cart
+  pk: 7
+  fields:
+    quantity: 1
+    total: '1.00'
+- model: store.cart
+  pk: 8
+  fields:
+    quantity: 0
+    total: '0.00'
+- model: store.product
+  pk: 1
+  fields:
+    name: HC Flag
+    description: The flag that you want
+    price: '100.00'
+    flag: flag={CountingInHash}
+    image: hcflag.jpg
+- model: store.product
+  pk: 2
+  fields:
+    name: Random Object
+    description: This is a random object you can buy for testing purposes
+    price: '1.00'
+    flag: ''
+    image: randomobject.jpg
+- model: store.cartitem
+  pk: 1
+  fields:
+    product: 2
+    cart: 1
+    quantity: 1
+- model: store.cartitem
+  pk: 2
+  fields:
+    product: 2
+    cart: 2
+    quantity: 1
+- model: store.cartitem
+  pk: 3
+  fields:
+    product: 2
+    cart: 3
+    quantity: 1
+- model: store.cartitem
+  pk: 4
+  fields:
+    product: 1
+    cart: 4
+    quantity: 1
+- model: store.cartitem
+  pk: 5
+  fields:
+    product: 2
+    cart: 5
+    quantity: 1
+- model: store.cartitem
+  pk: 6
+  fields:
+    product: 2
+    cart: 6
+    quantity: 1
+- model: store.cartitem
+  pk: 7
+  fields:
+    product: 2
+    cart: 7
+    quantity: 1
+- model: store.customer
+  pk: 1
+  fields:
+    user: 1
+    credit: '10.00'
+    cart: null
+- model: store.customer
+  pk: 2
+  fields:
+    user: 2
+    credit: '0.00'
+    cart: 8
+- model: store.transaction
+  pk: 1
+  fields:
+    customer: 2
+    cart: 1
+    timestamp: 2023-06-04 21:25:33.283172+00:00
+    slug: c4ca4238a0b923820dcc509a6f75849b
+- model: store.transaction
+  pk: 2
+  fields:
+    customer: 2
+    cart: 2
+    timestamp: 2023-06-04 21:25:42.821237+00:00
+    slug: c81e728d9d4c2f636f067f89cc14862c
+- model: store.transaction
+  pk: 3
+  fields:
+    customer: 2
+    cart: 3
+    timestamp: 2023-06-04 21:25:52.975169+00:00
+    slug: eccbc87e4b5ce2fe28308fd9f2a7baf3
+- model: store.transaction
+  pk: 4
+  fields:
+    customer: 2
+    cart: 4
+    timestamp: 2023-06-04 21:26:03.789061+00:00
+    slug: a87ff679a2f3e71d9181a67b7542122c
+- model: store.transaction
+  pk: 5
+  fields:
+    customer: 2
+    cart: 5
+    timestamp: 2023-06-04 21:26:13.433347+00:00
+    slug: e4da3b7fbbce2345d7772b0674a318d5
+- model: store.transaction
+  pk: 6
+  fields:
+    customer: 2
+    cart: 6
+    timestamp: 2023-06-04 21:26:25.292106+00:00
+    slug: 1679091c5a880faf6fb5e6087eb1b2dc
+- model: store.transaction
+  pk: 7
+  fields:
+    customer: 2
+    cart: 7
+    timestamp: 2023-06-04 21:26:33.840009+00:00
+    slug: 8f14e45fceea167a5a36dedd4bea2543

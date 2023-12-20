@@ -1,0 +1,1 @@
+After adding the flag product to the cart, see the source code.

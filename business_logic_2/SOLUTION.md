@@ -1,0 +1,1 @@
+Use the endpoints /cart/addto and /cart/updatein to add a negative number of flag products. Then add a number of random products such that the total number of items in the cart is positive and the total amount in the cart is less than the credit that the user has.
